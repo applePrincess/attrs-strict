@@ -16,16 +16,26 @@ from attrs_strict import type_validator
         (
             2.0,
             Union[int, str],
-            "Value of foo 2.0 is not of type typing.Union[int, str]",
+            (
+                "Value of foo 2.0 is not of type {}".format(
+                    "int | str"
+                    if sys.version_info >= (3, 14)
+                    else "typing.Union[int, str]"
+                )
+            ),
         ),
         (
             [1, 2, "p"],
             List[Union[None, int]],
             (
                 "Value of foo p is not of type {} in [1, 2, 'p']".format(
-                    "typing.Optional[int]"
-                    if sys.version_info >= (3, 9)
-                    else "typing.Union[NoneType, int]"
+                    "None | int"
+                    if sys.version_info >= (3, 14)
+                    else (
+                        "typing.Optional[int]"
+                        if sys.version_info >= (3, 9)
+                        else "typing.Union[NoneType, int]"
+                    )
                 )
             ),
         ),

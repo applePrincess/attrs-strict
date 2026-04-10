@@ -28,9 +28,13 @@ from attrs_strict import type_validator
             None,
             0xBAD,
             "Value of value 2989 is not of type {}".format(
-                "typing.Optional[str]"
-                if sys.version_info == (2, 7) or sys.version_info > (3, 9)
-                else "typing.Union[str, NoneType]"
+                "str | None"
+                if sys.version_info >= (3, 14)
+                else (
+                    "typing.Optional[str]"
+                    if sys.version_info == (2, 7) or sys.version_info > (3, 9)
+                    else "typing.Union[str, NoneType]"
+                )
             ),
         ),
     ],
@@ -75,9 +79,13 @@ def test_recursive():
     Self(Self())
     Self(Self(None))
     type_repr = (
-        "typing.Optional[test_auto_attribs__py3.Self]"
-        if sys.version_info == (2, 7) or sys.version_info > (3, 9)
-        else "typing.Union[test_auto_attribs__py3.Self, NoneType]"
+        "test_auto_attribs__py3.Self | None"
+        if sys.version_info >= (3, 14)
+        else (
+            "typing.Optional[test_auto_attribs__py3.Self]"
+            if sys.version_info == (2, 7) or sys.version_info > (3, 9)
+            else "typing.Union[test_auto_attribs__py3.Self, NoneType]"
+        )
     )
     msg = f"Value of parent 17 is not of type {type_repr}"
     with pytest.raises(ValueError, match=re.escape(msg)):
