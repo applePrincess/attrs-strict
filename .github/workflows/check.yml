@@ -66,16 +66,13 @@ jobs:
         run: tox -vv --notest
       - name: run test suite for ${{ matrix.py }}
         run: tox --skip-pkg-install
-      - name: Rename coverage report file
-        run: |
-          import os; import sys
-          os.rename(f".tox/.coverage.{os.environ['TOXENV']}", f".tox/.coverage.{os.environ['TOXENV']}-{sys.platform}")
-        shell: python
       - name: Upload coverage data
         uses: actions/upload-artifact@v7
         with:
-          name: coverage-data
+          name: coverage-data-${{ matrix.py }}
           path: ".tox/.coverage.*"
+          include-hidden-files: true
+          overwrite: true
 
   coverage:
     name: Combine coverage
@@ -99,7 +96,8 @@ jobs:
       - name: Download coverage data
         uses: actions/download-artifact@v7
         with:
-          name: coverage-data
+          pattern: coverage-data-*
+          merge-multiple: true
           path: .tox
       - name: Combine and report coverage
         run: tox -e coverage
